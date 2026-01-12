@@ -1,0 +1,8 @@
+#1 터미널 명령어 임력
+$env:GEMINI_API_KEY = "AIzaSyCDB6ARcGOL95pAOMP_i4fuipaT9cvzTT0"
+python "《☆Gemini와◇나의□끝판왕□멀티버스◇실시간-채팅방☆》.py"
+#2 터미널:1 터미널 명령어 임력 후 같은 터미널을 세로 열어서 아래 명령어 임력
+pip install pyngrok
+ngrok http 5001
+ngrok config add-authtoken "35B47pe1IB5gbqGzBjrunZ4MDQi_VBqYuHs9KxQujhNrj6xp"
+ngrok http 5001

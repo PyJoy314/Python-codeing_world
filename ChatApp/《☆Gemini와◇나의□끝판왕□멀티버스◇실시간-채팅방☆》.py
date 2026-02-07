@@ -13,6 +13,11 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
+@socketio.on("microbit_event")
+def on_microbit_event(data):
+    # data 예: {type:"IMG", payload:"99999/90009/90009/90009/99999"}
+    emit("microbit_event", data, broadcast=True)
+
 crypto_prices = {"비트코인": 50000000}
 noejul_loops = {}
 
@@ -248,6 +253,19 @@ def handle_msg(data):
             'reward': f"+{reward:,}₩",
             'total_asset': total 
         }, room='main')
-        
+
+def microbit_test_sender():
+    time.sleep(5)
+    socketio.emit("microbit_event", {
+        "type": "IMG",
+        "payload": "99999/90009/90009/90009/99999"
+    })
+    socketio.emit("microbit_event", {
+        "type": "TEXT",
+        "payload": "HELLO BITJOY"
+    })
+
+threading.Thread(target=microbit_test_sender, daemon=True).start()
+
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=PORT, host='0.0.0.0')

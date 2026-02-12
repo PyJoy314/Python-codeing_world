@@ -1,6 +1,0 @@
-M = int(input())
-e = M × 7474747
-while True:
-    while M >= e:
-        print(M)
-        M += 1

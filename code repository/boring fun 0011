@@ -1,6 +1,0 @@
-M = int(input())
-e = M
-while True:
-    while e >= -e:
-        print(e)
-        e += 1

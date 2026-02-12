@@ -1,7 +1,0 @@
-M = int(input())
-import random
-e = M * (random.randrange(7, 7474747))
-while True:
-    while M <= e:
-        print(M)
-        M += 1

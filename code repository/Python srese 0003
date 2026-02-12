@@ -1,9 +1,0 @@
-M = int(input())
-e = int(input())
-Py = int(input())
-m = int(input())
-
-if M == e and e >= Py and M == Py and M >= m and e != m :
-    print("[: I playing in Minecraft game with my friends~ :]")
-else:
-    print("]: Nooooooo, I want to playing in Minecraft game! :]")    

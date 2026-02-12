@@ -1,6 +1,0 @@
-M = int(input())
-e = int(input())
-Py = int(input())
-m = int(input())
-
-print(M == e and e >= Py and M == Py and M >= m and e != m)

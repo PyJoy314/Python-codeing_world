@@ -1,8 +1,0 @@
-M = int(input())
-e = int(input())
-
-for i in range(M):
-    for J in range(e):
-        print("☆", end="")
-    print()
-    

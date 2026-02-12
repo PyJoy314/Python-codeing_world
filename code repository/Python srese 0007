@@ -1,8 +1,0 @@
-import random
-
-print(random.randrange(7, 7474747))
-if random.randrange == 7474747 :
-    print("Yayyyyyy~! wo ho~! I got it!!!")
-else :
-    print("Nooooo!!! my lottow!!")    
-    

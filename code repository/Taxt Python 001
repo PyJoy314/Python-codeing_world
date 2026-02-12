@@ -1,0 +1,36 @@
+M = input().strip()
+e = M
+
+while e >= 47:
+    print(e)
+    e += 1
+    if e == 1:
+        print("M")
+        elif e == 2:
+            print("Minecraft")
+            elif e == 3:
+                print("e")
+                elif e == 4:
+                    print("entry")
+                    elif e == 5:
+                        print("Py")
+                        elif e == 6:
+                            print("Python")
+                            elif e == 7:
+                                print("R")
+                                elif e == 8:
+                                    print("Roblox")
+                                    elif e == 2:
+                                        print("Minecraft")
+                                        elif e == 3:
+                                            print("e")
+                elif e == 4:
+                    print("entry")
+                    elif e == 5:
+                        print("Py")
+                        elif e == 6:
+                            print("Python")
+                            elif e == 7:
+                                print("R")
+                                elif e == 8:
+                                    print("Roblox")

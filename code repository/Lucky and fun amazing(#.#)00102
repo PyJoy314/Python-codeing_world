@@ -1,0 +1,16 @@
+Py = int(input())
+Minecraft = 0
+import random
+e = Py * random.randrange(7, 7474747)
+while True:
+    M = int(input())
+    Minecraft = M + Py
+    if Minecraft >= e:
+        print("Yay~! Wo-ho!!! I did it!!!", "(:☆.☆:)")
+        break
+    elif Minecraft <= e:
+        print("??? what??? I did it?!? Wo ho~!", "(:|.l:)")
+        break
+    else:
+        print("Oh my,", "I'll try agaen!!", "(:>.<:)")
+        Minecraft = 0

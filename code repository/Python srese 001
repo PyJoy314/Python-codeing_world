@@ -1,0 +1,11 @@
+M = int(input())
+e = int(input())
+m = int(input())
+Py = int(input())
+
+Minecraft = M != e
+entry = e != Py
+mblock = M != Py
+Python = e == m
+
+print(Minecraft, entry, mblock, Python)

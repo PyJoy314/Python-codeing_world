@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Image -> Conway's Game of Life</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.sound.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.slim.min.js"
+            integrity="sha256-ZwqZIVdD3iXNyGHbSYdsmWP//UBokj2FHAxKuSBKDSo="
+            crossorigin="anonymous"></script>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+    <h1>Image -> Conway's Game of Life</h1>
+    <div>
+        Converts the image to conway's game of life, then runs it.
+    </div>
+    <br>
+    <div>
+        <input type="file" accept="image/*" id="imgUpload" onchange="loadFile(event)">
+        <br>
+        <p>Life grid resolution:</p>
+        <label for="dotWidth">Width</label>
+        <input type="number" step="1" id="dotWidth" value="120">
+        <label for="dotHeight">Height</label>
+        <input type="number" step="1" id="dotHeight" value="120"><br><br>
+        <button onclick="submit()">submit</button>
+    </div>
+    <br><br>
+    <div>
+        <script src="sketch.js"></script>
+    </div>
+    <img id="img">
+</body>
+
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Image -> Conway's Game of Life (大韓 Multiverse Empire Edition)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        #defaultCanvas0 { border: 1px solid #ccc; margin-top: 20px; display: block; }
+        input[type="number"] { width: 60px; }
+        .controls { background: #f9f9f9; padding: 15px; border-radius: 8px; }
+    </style>
+</head>
+
+<body>
+    <h1>Image -> Conway's Game of Life</h1>
+    <div>
+        이미지를 Conway의 라이프 게임으로 변환하고 실행합니다.
+    </div>
+    <br>
+    <div class="controls">
+        <input type="file" accept="image/*" id="imgUpload" onchange="loadFile(event)">
+        <button id="exportRleBtn" style="margin-top: 10px; padding: 10px; background-color: #f0c000; font-weight: bold; cursor: pointer;">
+            대한국 제국 RLE 내보내기
+        </button>
+        <br><br>
+        <p>Life grid resolution (해상도 설정):</p>
+        <label for="dotWidth">Width</label>
+        <input type="number" step="1" id="dotWidth" value="120">
+        <label for="dotHeight">Height</label>
+        <input type="number" step="1" id="dotHeight" value="120">
+        <button onclick="submit()" style="padding: 5px 15px; margin-left: 10px; cursor: pointer;">Submit</button>
+    </div>
+
+    <script>
+        let img;
+        let grid = [];
+        let cols, rows;
+        let isRunning = false;
+
+        function setup() {
+            createCanvas(400, 400);
+            noLoop(); // 처음에는 멈춤 상태
+        }
+
+        function draw() {
+            background(255);
+            if (!grid.length) return;
+
+            let cellW = width / cols;
+            let cellH = height / rows;
+
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    if (grid[i][j] === 1) {
+                        fill(0);
+                        noStroke();
+                        rect(i * cellW, j * cellH, cellW, cellH);
+                    }
+                }
+            }
+
+            if (isRunning) {
+                updateGrid();
+            }
+        }
+
+        // 1. 파일 불러오기 함수 (ReferenceError 해결)
+        function loadFile(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let url = URL.createObjectURL(file);
+                img = loadImage(url, () => {
+                    console.log("이미지 로드 완료");
+                    submit(); // 로드 후 바로 미리보기 생성
+                });
+            }
+        }
+
+        // 2. 이미지 -> 라이프 그리드 변환 함수 (ReferenceError 해결)
+        function submit() {
+            if (!img) {
+                alert("이미지를 먼저 선택해주세요!");
+                return;
+            }
+            
+            cols = parseInt(document.getElementById('dotWidth').value);
+            rows = parseInt(document.getElementById('dotHeight').value);
+            
+            // 그리드 초기화
+            grid = new Array(cols);
+            for (let i = 0; i < cols; i++) {
+                grid[i] = new Array(rows).fill(0);
+            }
+
+            // 이미지 샘플링 및 흑백 이진화
+            img.loadPixels();
+            let tempImg = img.get();
+            tempImg.resize(cols, rows);
+            tempImg.loadPixels();
+
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    let index = (x + y * cols) * 4;
+                    let r = tempImg.pixels[index];
+                    let g = tempImg.pixels[index + 1];
+                    let b = tempImg.pixels[index + 2];
+                    let bright = (r + g + b) / 3;
+                    
+                    // 밝기가 127보다 어두우면 생존 세포(1)로 간주
+                    grid[x][y] = bright < 127 ? 1 : 0;
+                }
+            }
+            
+            isRunning = false; // 변환 직후에는 멈춤
+            loop();
+            draw();
+        }
+
+        // 간단한 라이프 게임 룰 업데이트 로직
+        function updateGrid() {
+            let next = new Array(cols).fill(0).map(() => new Array(rows).fill(0));
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    let state = grid[i][j];
+                    let neighbors = countNeighbors(grid, i, j);
+
+                    if (state == 0 && neighbors == 3) {
+                        next[i][j] = 1;
+                    } else if (state == 1 && (neighbors < 2 || neighbors > 3)) {
+                        next[i][j] = 0;
+                    } else {
+                        next[i][j] = state;
+                    }
+                }
+            }
+            grid = next;
+        }
+
+        function countNeighbors(g, x, y) {
+            let sum = 0;
+            for (let i = -1; i < 2; i++) {
+                for (let j = -1; j < 2; j++) {
+                    let col = (x + i + cols) % cols;
+                    let row = (y + j + rows) % rows;
+                    sum += g[col][row];
+                }
+            }
+            sum -= g[x][y];
+            return sum;
+        }
+
+        // 3. RLE 내보내기 버튼 로직 (기존 로직 유지 및 연결)
+        document.getElementById('exportRleBtn').onclick = function () {
+            let xSize = parseInt(document.getElementById('dotWidth').value);
+            let ySize = parseInt(document.getElementById('dotHeight').value);
+
+            if (!grid || grid.length === 0) {
+                alert("세포 데이터를 찾을 수 없습니다. 이미지를 먼저 업로드해 주세요!");
+                return;
+            }
+
+            let rleBody = "";
+            for (let y = 0; y < ySize; y++) {
+                let rowStr = "";
+                for (let x = 0; x < xSize; x++) {
+                    let alive = grid[x][y] === 1;
+                    rowStr += alive ? "o" : "b";
+                }
+
+                let encodedRow = "";
+                let count = 1;
+                for (let i = 1; i <= rowStr.length; i++) {
+                    if (i < rowStr.length && rowStr[i] === rowStr[i - 1]) {
+                        count++;
+                    } else {
+                        encodedRow += (count > 1 ? count : "") + rowStr[i - 1];
+                        count = 1;
+                    }
+                }
+                rleBody += encodedRow + (y === ySize - 1 ? "!" : "$");
+            }
+
+            let rleHeader = `#N 大韓 Multiverse Empire • 건양(建陽) 원년 logo\n#C Developed for High Resolution Grid\nx = ${xSize}, y = ${ySize}, rule = B3/S23\n`;
+            let blob = new Blob([rleHeader + rleBody], {type: 'text/plain'});
+            let a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Empire_HighRes_${xSize}x${ySize}.rle`;
+            a.click();
+        };
+    </script>
+</body>
+</html>

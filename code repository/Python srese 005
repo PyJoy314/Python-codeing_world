@@ -1,0 +1,5 @@
+M = input().strip()
+e = int(input())
+
+print(bool(M))
+print(bool(e))

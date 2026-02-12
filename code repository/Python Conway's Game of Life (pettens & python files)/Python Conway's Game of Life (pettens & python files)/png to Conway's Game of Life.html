@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>PNG → Conway's Game of Life → RLE</title>
+
+    <!-- p5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+
+    <!-- jQuery (선택이지만 기존 로직 호환용) -->
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Image → Conway's Game of Life → RLE</h1>
+
+<div>
+    Converts an image into Conway's Game of Life, then exports it as RLE.
+</div>
+
+<br>
+
+<div>
+    <input type="file" accept="image/*" id="imgUpload" onchange="loadFile(event)">
+    <br><br>
+
+    <p>Life grid resolution:</p>
+    <label>Width</label>
+    <input type="number" id="dotWidth" value="120">
+    <label>Height</label>
+    <input type="number" id="dotHeight" value="120">
+    <br><br>
+
+    <button onclick="submit()">submit</button>
+
+    <br><br>
+
+    <button id="exportRleBtn" style="background-color:#f0c000;">
+        大韓 Multiverse Empire RLE 내보내기
+    </button>
+</div>
+
+<br>
+
+<!-- 기존 Conway 변환 로직 -->
+<script>
+let img;
+let grid = [];
+let cols, rows;
+let cellW, cellH;
+
+function loadFile(event) {
+    img = loadImage(URL.createObjectURL(event.target.files[0]));
+}
+
+function submit() {
+    let w = parseInt(document.getElementById("dotWidth").value);
+    let h = parseInt(document.getElementById("dotHeight").value);
+
+    cols = w;
+    rows = h;
+    grid = Array.from({ length: cols }, () => Array(rows).fill(0));
+
+    img.resize(cols, rows);
+    img.loadPixels();
+
+    for (let x = 0; x < cols; x++) {
+        for (let y = 0; y < rows; y++) {
+            let idx = (x + y * img.width) * 4;
+            let brightness =
+                img.pixels[idx] +
+                img.pixels[idx + 1] +
+                img.pixels[idx + 2];
+            grid[x][y] = brightness < 380 ? 1 : 0;
+        }
+    }
+
+    redraw();
+}
+
+function setup() {
+    createCanvas(400, 400);
+    noLoop();
+}
+
+function draw() {
+    background(255);
+    if (!grid.length) return;
+
+    cellW = width / cols;
+    cellH = height / rows;
+
+    for (let x = 0; x < cols; x++) {
+        for (let y = 0; y < rows; y++) {
+            if (grid[x][y]) {
+                fill(0);
+                rect(x * cellW, y * cellH, cellW, cellH);
+            }
+        }
+    }
+}
+</script>
+
+<img id="img" hidden>
+
+<script>
+document.getElementById("exportRleBtn").onclick = function () {
+
+    let xSize = parseInt(document.getElementById("dotWidth").value);
+    let ySize = parseInt(document.getElementById("dotHeight").value);
+
+    // sketch.js에서 생성되는 전역 grid 사용
+    if (typeof grid === "undefined") {
+        alert("이미지를 먼저 업로드하고 submit을 눌러주세요!");
+        return;
+    }
+
+    let rleBody = "";
+
+    for (let y = 0; y < ySize; y++) {
+        let row = "";
+        for (let x = 0; x < xSize; x++) {
+            let alive = grid[x][y] === 1 || grid[x][y] === true;
+            row += alive ? "o" : "b";
+        }
+
+        // RLE 압축
+        let encoded = "";
+        let count = 1;
+        for (let i = 1; i <= row.length; i++) {
+            if (i < row.length && row[i] === row[i - 1]) {
+                count++;
+            } else {
+                encoded += (count > 1 ? count : "") + row[i - 1];
+                count = 1;
+            }
+        }
+
+        rleBody += encoded + (y === ySize - 1 ? "!" : "$");
+    }
+
+    let header =
+`#N 大韓 Multiverse Empire • Established 1995 • 건양(建陽) 원년
+#C Generated from PNG via p5.js
+x = ${xSize}, y = ${ySize}, rule = B3/S23
+`;
+
+    let blob = new Blob([header + rleBody], { type: "text/plain" });
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `Empire_${xSize}x${ySize}.rle`;
+    a.click();
+};
+</script>
+
+</body>
+</html>

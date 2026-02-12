@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://quasarbright.github.io/p5js/image-conway/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="./Image to Conway's Game of Life_files/p5.js.다운로드"></script>
+    <script src="./Image to Conway's Game of Life_files/jquery-3.6.3.slim.min.js.다운로드"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    
+</head>
+
+<body>
+    <h1>Image -&gt; Conway's Game of Life</h1>
+    <div>
+        Converts the image to conway's game of life, then runs it.
+    </div>
+    <br>
+    <div>
+        <input type="file" accept="image/*" id="imgUpload" onchange="loadFile(event)">
+        <button id="exportRleBtn" style="margin-top: 10px; padding: 10px; background-color: #f0c000; font-weight: bold; cursor: pointer;">
+            대한국 제국 RLE 내보내기
+        </button>
+        <br>
+        <p>Life grid resolution:</p>
+        <label for="dotWidth">Width</label>
+        <input type="number" step="1" id="dotWidth" value="120">
+        <label for="dotHeight">Height</label>
+        <input type="number" step="1" id="dotHeight" value="120"><br><br>
+        <button onclick="submit()">submit</button>
+    </div>
+    <br><br>
+    <div>
+        <script src="./Image to Conway&#39;s Game of Life_files/sketch.js.다운로드"></script>
+    </div>
+    <img id="img">
+    <script>
+        document.getElementById('exportRleBtn').onclick = function () {
+            // jQuery($) 대신 순수 자바스크립트로 값 가져오기
+            let xSize = parseInt(document.getElementById('dotWidth').value);
+            let ySize = parseInt(document.getElementById('dotHeight').value);
+
+            // 이 사이트는 보통 전역 변수로 grid를 사용합니다.
+            // 만약 에러가 나면 console.log(window)를 찍어봐야 해요.
+            if (typeof grid === 'undefined') {
+                alert("세포 데이터를 찾을 수 없습니다. 이미지를 먼저 업로드해 주세요!");
+                return;
+            }
+
+            let rleBody = "";
+            for (let y = 0; y < ySize; y++) {
+                let rowStr = "";
+                for (let x = 0; x < xSize; x++) {
+                    // 사이트 내부 구조에 맞춰서 1 또는 true일 때 생존('o')
+                    let alive = grid[x][y] === 1 || grid[x][y] === true;
+                    rowStr += alive ? "o" : "b";
+                }
+
+                // RLE 행 압축 로직
+                let encodedRow = "";
+                let count = 1;
+                for (let i = 1; i <= rowStr.length; i++) {
+                    if (i < rowStr.length && rowStr[i] === rowStr[i - 1]) {
+                        count++;
+                    } else {
+                        encodedRow += (count > 1 ? count : "") + rowStr[i - 1];
+                        count = 1;
+                    }
+                }
+                rleBody += encodedRow + (y === ySize - 1 ? "!" : "$");
+            }
+
+            // 파일 저장 로직 (이전과 동일)
+            let rleHeader = `#N 大韓 Multiverse Empire • 건양(建陽) 원년 logo\nx = ${xSize}, y = ${ySize}, rule = lifesuper\n`;
+            let blob = new Blob([rleHeader + rleBody], {type: 'text/plain'});
+            let a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `Empire_HighRes_${xSize}x${ySize}.rle`;
+            a.click();
+        };
+    </script>
+
+
+
+<canvas id="defaultCanvas0" class="p5Canvas" width="400" height="400" style="width: 400px; height: 400px;"></canvas></body></html>

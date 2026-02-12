@@ -1,0 +1,6 @@
+M = int(input())
+e = M
+while True:
+    while e >= 0:
+        print(e)
+        e += 1

@@ -1,0 +1,10 @@
+M = input().strip()
+e = input().strip()
+Py = input().strip()
+R = input().strip()
+
+if M == e and e >= Py and M == Py and M >= R and e != R :
+    print("[: I'm playing in Minecraft game with my friends~ :]")
+else:
+    print("]: Nooooooo, Plese do playing in Minecraft game 2 hour! :]") 
+       

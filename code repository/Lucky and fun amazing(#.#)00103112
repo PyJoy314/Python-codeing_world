@@ -1,0 +1,17 @@
+print("I'm bording...", "What can I do?", "Ya, i going to do somethings.", "(:^.^:)")
+Py = float(input())
+Minecraft = 0
+import random
+while True:
+    e = Py * random.randrange(4 * 7474747, 258458868567474747202507 * 54869997474747202512)
+    M = float(input())
+    Minecraft = M + Py
+    if Minecraft >= e:
+        print("Yay~! Wo-ho!!! I did it!!!", "(:☆.☆:)")
+        break
+    elif Minecraft <= 0:
+        print("??? what??? I did it?!? Wo ho~!", "(:l.l:)")
+        break
+    else:
+        print("Oh my,", "I'll try agaen!!", "(:>.<:)")
+        Minecraft = 0
